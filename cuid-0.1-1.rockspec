@@ -2,7 +2,7 @@ package = "cuid"
 version = "0.1-1"
 
 source = {
-  url = "http://github.com/marcoonroad/cuid",
+  url = "git://github.com/marcoonroad/cuid",
 }
 
 description = {
