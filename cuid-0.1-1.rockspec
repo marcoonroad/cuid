@@ -3,6 +3,7 @@ version = "0.1-1"
 
 source = {
   url = "git://github.com/marcoonroad/cuid",
+  tag = "v0.1-1",
 }
 
 description = {
