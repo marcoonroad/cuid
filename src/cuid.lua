@@ -29,7 +29,7 @@ local LOADED_TIME     = os.time ( )
 
 -- helper functions ---------------------------------
 local function to_hex (number)
-	return string.format ("%x", number)
+	return string.format ("%x", math.floor (number))
 end
 
 local function pad (number, size)
