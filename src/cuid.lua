@@ -12,7 +12,7 @@
 --        Notes:  ---
 --       Author:  Marco Aurélio da Silva (marcoonroad), <marcoonroad@gmail.com>
 -- Organization:  ---
---      Version:  1.0
+--      Version:  0.2
 --      Created:  23-03-2018
 --     Revision:  ---
 --------------------------------------------------------------------------------
@@ -56,6 +56,17 @@ local function random_block ( )
 	return pad (to_hex (random), BLOCK_SIZE)
 end
 
+local function fingerprint_sum (text)
+	local sum    = 0
+	local length = string.len (text) + 1 -- avoids div by zero --
+
+	for letter in string.gmatch (text, ".") do
+		sum = sum + string.byte (letter)
+	end
+
+	return sum / length
+end
+
 local function fingerprint ( )
 	if FINGERPRINT then
 		return pad (FINGERPRINT, BLOCK_SIZE)
@@ -64,12 +75,14 @@ local function fingerprint ( )
 	local executable = os.getenv ("_")        or ""
 	local hostname   = os.getenv ("HOSTNAME") or ""
 	local user       = os.getenv ("USER")     or ""
+	local directory  = os.getenv ("PWD")      or ""
 
-	local first  = string.len (executable)
-	local second = string.len (hostname)
-	local third  = string.len (user)
+	local first  = fingerprint_sum (executable)
+	local second = fingerprint_sum (hostname)
+	local third  = fingerprint_sum (user)
 	local fourth = LOADED_TIME
-	local sum    = first + second + third + fourth
+	local fifth  = fingerprint_sum (directory)
+	local sum    = (first + second + third + fourth + fifth) / 5
 
 	return pad (to_hex (sum), BLOCK_SIZE)
 end

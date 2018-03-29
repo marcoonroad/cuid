@@ -35,7 +35,7 @@ describe ("cuid unit testing", function ( )
 
 		local cuids = { }
 
-		for iteration = 1, ITERATIONS do
+		for _ = 1, ITERATIONS do
 			local id = cuid.generate ( )
 
 			assert.falsy (cuids[ id ])
