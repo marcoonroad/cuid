@@ -83,17 +83,7 @@ local function default_fingerprint ( )
 	return pad (to_hex (sum), BLOCK_SIZE)
 end
 
-local DEFAULT_FINGERPRINT = (function ( )
-	if CUSTOM_FINGERPRINT then
-		local sum = fingerprint_sum (CUSTOM_FINGERPRINT)
-
-		CUSTOM_FINGERPRINT = nil -- so it won't be used anymore --
-
-		return pad (to_hex (sum), BLOCK_SIZE)
-	end
-
-	return default_fingerprint ( )
-end) ( )
+local DEFAULT_FINGERPRINT = default_fingerprint ( )
 
 local function fingerprint ( )
 	-- employs memoization --
