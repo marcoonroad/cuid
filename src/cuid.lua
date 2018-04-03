@@ -92,6 +92,10 @@ function export.__set_fingerprint (value)
 	FINGERPRINT = value
 end
 
+function export.__reset_fingerprint ( )
+	FINGERPRINT = nil
+end
+
 function export.__structure( )
 	local timestamp = pad (to_hex (os.time ( )), BLOCK_SIZE * 2)
 	local count     = pad (to_hex (safe_counter ( )), BLOCK_SIZE)

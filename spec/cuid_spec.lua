@@ -2,6 +2,12 @@ require 'busted.runner' ( )
 
 local cuid = require 'cuid'
 
+local fingerprint = "muh-hell3"
+
+local function is_hex (text)
+	return text: match ("[a-f0-9]+") == text
+end
+
 describe ("cuid unit testing", function ( )
 	it ("should comply the usecuid.org spec", function ( )
 		local result = cuid.__structure ( )
@@ -11,6 +17,12 @@ describe ("cuid unit testing", function ( )
 		assert.same (result.counter:     len ( ), 4)
 		assert.same (result.fingerprint: len ( ), 4)
 		assert.same (result.random:      len ( ), 8)
+
+		assert.truthy (is_hex (result.prefix))
+		assert.truthy (is_hex (result.timestamp))
+		assert.truthy (is_hex (result.counter))
+		assert.truthy (is_hex (result.fingerprint))
+		assert.truthy (is_hex (result.random))
 	end)
 
 	it ("should generate a proper cuid", function ( )
@@ -18,16 +30,8 @@ describe ("cuid unit testing", function ( )
 
 		assert.same (id: len ( ), 25)
 		assert.same (id: sub (1, 1), 'c')
-	end)
 
-	it ("should be able to define a custom fingerprint", function ( )
-		local fingerprint = "hell3"
-
-		cuid.__set_fingerprint (fingerprint)
-
-		local result = cuid.__structure ( )
-
-		assert.same (result.fingerprint, "ell3")
+		assert.truthy (is_hex (id))
 	end)
 
 	it ("should not collide cuids", function ( )
@@ -42,5 +46,21 @@ describe ("cuid unit testing", function ( )
 
 			cuids[ id ] = true
 		end
+	end)
+
+	it ("fingerprint should not resemble the fingerprint feed", function ( )
+		cuid.__set_fingerprint (fingerprint)
+		local result = cuid.__structure ( )
+
+		assert.are_not.same (result.fingerprint, "ell3")
+		cuid.__reset_fingerprint ( )
+	end)
+
+	it ("fingerprint should generate valid hexadecimal values", function ( )
+		cuid.__set_fingerprint (fingerprint)
+		local result = cuid.__structure ( )
+
+		assert.truthy (is_hex (result.fingerprint))
+		cuid.__reset_fingerprint ( )
 	end)
 end)
