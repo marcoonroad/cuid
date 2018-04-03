@@ -52,7 +52,7 @@ local function safe_counter ( )
 end
 
 local function random_uniform (limit)
-	return math.random (1, limit)
+	return math.random (0, limit - 1)
 end
 
 local function random_block ( )
@@ -141,13 +141,11 @@ end
 function export.generate ( )
 	local result = export.__structure ( )
 
-	return table.concat {
-		result.prefix,
-		result.timestamp,
-		result.counter,
-		result.fingerprint,
+	return result.prefix ..
+		result.timestamp ..
+		result.counter ..
+		result.fingerprint ..
 		result.random
-	}
 end
 
 return export

@@ -8,7 +8,9 @@ local function is_hex (text)
 	return text: match ("[a-f0-9]+") == text
 end
 
-describe ("cuid unit testing", function ( )
+describe ("cuid unit testing -", function ( )
+	randomize ( )
+
 	it ("should comply the usecuid.org spec", function ( )
 		local result = cuid.__structure ( )
 
@@ -37,30 +39,36 @@ describe ("cuid unit testing", function ( )
 	it ("should not collide cuids", function ( )
 		local ITERATIONS = math.random (200000, 1200000)
 
-		local cuids = { }
+		local cuids     = { }
+		local collision = false
 
 		for _ = 1, ITERATIONS do
 			local id = cuid.generate ( )
 
-			assert.falsy (cuids[ id ])
+			if cuids[ id ] then
+				collision = true
+				break
+			end
 
 			cuids[ id ] = true
 		end
+
+		assert.falsy (collision)
 	end)
 
 	it ("fingerprint should not resemble the fingerprint feed", function ( )
 		cuid.__set_fingerprint (fingerprint)
-		local result = cuid.__structure ( )
+		finally (cuid.__reset_fingerprint)
 
+		local result = cuid.__structure ( )
 		assert.are_not.same (result.fingerprint, "ell3")
-		cuid.__reset_fingerprint ( )
 	end)
 
 	it ("fingerprint should generate valid hexadecimal values", function ( )
 		cuid.__set_fingerprint (fingerprint)
-		local result = cuid.__structure ( )
+		finally (cuid.__reset_fingerprint)
 
+		local result = cuid.__structure ( )
 		assert.truthy (is_hex (result.fingerprint))
-		cuid.__reset_fingerprint ( )
 	end)
 end)
