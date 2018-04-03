@@ -12,7 +12,7 @@
 --        Notes:  ---
 --       Author:  Marco Aurélio da Silva (marcoonroad), <marcoonroad@gmail.com>
 -- Organization:  ---
---      Version:  0.2
+--      Version:  0.3
 --      Created:  23-03-2018
 --     Revision:  ---
 --------------------------------------------------------------------------------
@@ -21,11 +21,16 @@
 local export = { }
 
 local CUID_PREFIX     = "c"
-local FINGERPRINT     = os.getenv ("LUA_CUID_FINGERPRINT")
 local counter         = 0
 local BLOCK_SIZE      = 4
 local DISCRETE_VALUES = 1679616 -- 36 ^ BLOCK_SIZE --
 local LOADED_TIME     = os.time ( )
+local EXECUTABLE      = os.getenv ("_")        or ""
+local HOSTNAME        = os.getenv ("HOSTNAME") or ""
+local USER            = os.getenv ("USER")     or ""
+local DIRECTORY       = os.getenv ("PWD")      or ""
+
+local CUSTOM_FINGERPRINT = os.getenv ("LUA_CUID_FINGERPRINT")
 
 -- helper functions ---------------------------------
 local function to_hex (number)
@@ -67,38 +72,59 @@ local function fingerprint_sum (text)
 	return sum / length
 end
 
-local function fingerprint ( )
-	if FINGERPRINT then
-		return pad (FINGERPRINT, BLOCK_SIZE)
-	end
-
-	local executable = os.getenv ("_")        or ""
-	local hostname   = os.getenv ("HOSTNAME") or ""
-	local user       = os.getenv ("USER")     or ""
-	local directory  = os.getenv ("PWD")      or ""
-
-	local first  = fingerprint_sum (executable)
-	local second = fingerprint_sum (hostname)
-	local third  = fingerprint_sum (user)
+local function default_fingerprint ( )
+	local first  = fingerprint_sum (EXECUTABLE)
+	local second = fingerprint_sum (HOSTNAME)
+	local third  = fingerprint_sum (USER)
 	local fourth = LOADED_TIME
-	local fifth  = fingerprint_sum (directory)
+	local fifth  = fingerprint_sum (DIRECTORY)
 	local sum    = (first + second + third + fourth + fifth) / 5
 
 	return pad (to_hex (sum), BLOCK_SIZE)
 end
 
+local DEFAULT_FINGERPRINT = (function ( )
+	if CUSTOM_FINGERPRINT then
+		local sum = fingerprint_sum (CUSTOM_FINGERPRINT)
+
+		CUSTOM_FINGERPRINT = nil -- so it won't be used anymore --
+
+		return pad (to_hex (sum), BLOCK_SIZE)
+	end
+
+	return default_fingerprint ( )
+end) ( )
+
+local function fingerprint ( )
+	-- employs memoization --
+	if CUSTOM_FINGERPRINT then
+		local sum = fingerprint_sum (CUSTOM_FINGERPRINT)
+
+		CUSTOM_FINGERPRINT  = nil
+		DEFAULT_FINGERPRINT = pad (to_hex (sum), BLOCK_SIZE)
+	end
+
+	return DEFAULT_FINGERPRINT
+end
+
+local function pad_from_hex (value, size)
+	return pad (to_hex (value), size)
+end
+
 -- private API --------------------------------------
 function export.__set_fingerprint (value)
-	FINGERPRINT = value
+	DEFAULT_FINGERPRINT = nil
+	CUSTOM_FINGERPRINT  = value
 end
 
 function export.__reset_fingerprint ( )
-	FINGERPRINT = nil
+	CUSTOM_FINGERPRINT  = nil
+	DEFAULT_FINGERPRINT = default_fingerprint ( )
 end
 
 function export.__structure( )
-	local timestamp = pad (to_hex (os.time ( )), BLOCK_SIZE * 2)
-	local count     = pad (to_hex (safe_counter ( )), BLOCK_SIZE)
+	local timestamp = pad_from_hex (os.time ( ),      BLOCK_SIZE * 2)
+	local count     = pad_from_hex (safe_counter ( ), BLOCK_SIZE)
 	local print     = fingerprint ( )
 	local random    = random_block ( ) .. random_block ( )
 

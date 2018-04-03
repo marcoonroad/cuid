@@ -6,7 +6,7 @@ env:
   global:
     - LUAROCKS_VERSION="2.3.0"
     - ROCK_NAME="cuid"
-    - ROCK_VERSION="0.2-1"
+    - ROCK_VERSION="0.3-1"
   matrix:
     - LUA_VERSION="5.2.4"       LUA_SUFFIX=""    REBUILD=0 NOCOVERAGE=0
     - LUA_VERSION="5.2.1"       LUA_SUFFIX=""    REBUILD=0 NOCOVERAGE=0
@@ -37,4 +37,3 @@ notifications:
   email:
     on_success: change
     on_failure: always
-
