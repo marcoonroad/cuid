@@ -12,7 +12,7 @@
 --        Notes:  ---
 --       Author:  Marco Aurélio da Silva (marcoonroad), <marcoonroad@gmail.com>
 -- Organization:  ---
---      Version:  0.3
+--      Version:  0.4
 --      Created:  23-03-2018
 --     Revision:  ---
 --------------------------------------------------------------------------------
@@ -22,8 +22,9 @@ local export = { }
 
 local CUID_PREFIX     = "c"
 local counter         = 0
+local BASE            = 36
 local BLOCK_SIZE      = 4
-local DISCRETE_VALUES = 1679616 -- 36 ^ BLOCK_SIZE --
+local DISCRETE_VALUES = 1679616 -- BASE ^ BLOCK_SIZE --
 local LOADED_TIME     = os.time ( )
 local EXECUTABLE      = os.getenv ("_")        or ""
 local HOSTNAME        = os.getenv ("HOSTNAME") or ""
@@ -33,8 +34,27 @@ local DIRECTORY       = os.getenv ("PWD")      or ""
 local CUSTOM_FINGERPRINT = os.getenv ("LUA_CUID_FINGERPRINT")
 
 -- helper functions ---------------------------------
-local function to_hex (number)
-	return string.format ("%x", math.floor (number))
+local alphabet = {
+	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+	"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
+}
+
+local function to_base36 (number)
+	number = math.abs (math.floor (number))
+
+	if number < BASE then return alphabet[ number + 1 ] end
+
+	local result = ""
+
+	while number ~= 0 do
+		local index = number % BASE
+
+		result = alphabet[ index + 1 ] .. result
+		number = math.floor (number / BASE)
+	end
+
+	return result
 end
 
 local function pad (number, size)
@@ -58,7 +78,7 @@ end
 local function random_block ( )
 	local random = random_uniform (DISCRETE_VALUES)
 
-	return pad (to_hex (random), BLOCK_SIZE)
+	return pad (to_base36 (random), BLOCK_SIZE)
 end
 
 local function fingerprint_sum (text)
@@ -80,7 +100,7 @@ local function default_fingerprint ( )
 	local fifth  = fingerprint_sum (DIRECTORY)
 	local sum    = (first + second + third + fourth + fifth) / 5
 
-	return pad (to_hex (sum), BLOCK_SIZE)
+	return pad (to_base36 (sum), BLOCK_SIZE)
 end
 
 local DEFAULT_FINGERPRINT = default_fingerprint ( )
@@ -91,14 +111,14 @@ local function fingerprint ( )
 		local sum = fingerprint_sum (CUSTOM_FINGERPRINT)
 
 		CUSTOM_FINGERPRINT  = nil
-		DEFAULT_FINGERPRINT = pad (to_hex (sum), BLOCK_SIZE)
+		DEFAULT_FINGERPRINT = pad (to_base36 (sum), BLOCK_SIZE)
 	end
 
 	return DEFAULT_FINGERPRINT
 end
 
-local function pad_from_hex (value, size)
-	return pad (to_hex (value), size)
+local function pad_from_base36 (value, size)
+	return pad (to_base36 (value), size)
 end
 
 -- private API --------------------------------------
@@ -113,8 +133,8 @@ function export.__reset_fingerprint ( )
 end
 
 function export.__structure( )
-	local timestamp = pad_from_hex (os.time ( ),      BLOCK_SIZE * 2)
-	local count     = pad_from_hex (safe_counter ( ), BLOCK_SIZE)
+	local timestamp = pad_from_base36 (os.time ( ),      BLOCK_SIZE * 2)
+	local count     = pad_from_base36 (safe_counter ( ), BLOCK_SIZE)
 	local print     = fingerprint ( )
 	local random    = random_block ( ) .. random_block ( )
 

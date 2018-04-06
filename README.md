@@ -35,13 +35,13 @@ Once loaded, you can generate fresh CUIDs through:
 local id = cuid.generate ( )
 ```
 
-As an example of CUID, we have `c5abc902d0000b6a85acae92c`, where:
+As an example of CUID, we have `c00p6qup20000ckkzslahp5pn`, where:
 
 - `c` is the CUID prefix (so it's a valid variable).
-- `5abc902d` is a timestamp/continuous number.
+- `00p6qup2` is a timestamp/continuous number.
 - `0000` is the internal sequential counter.
-- `b6a8` is the machine/host fingerprint.
-- `5acae92c` are pseudo-random numbers.
+- `ckkz` is the machine/host fingerprint.
+- `slahp5pn` are pseudo-random numbers.
 
 ### Configuration
 
@@ -56,4 +56,3 @@ indeed defined.
 ### Remarks
 
 Pull requests and issues are welcome! Happy hacking!
-

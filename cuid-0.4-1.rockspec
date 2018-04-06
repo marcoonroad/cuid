@@ -1,9 +1,9 @@
 package = "cuid"
-version = "0.3-1"
+version = "0.4-1"
 
 source = {
   url = "git://github.com/marcoonroad/cuid",
-  tag = "v0.3-1",
+  tag = "v0.4-1",
 }
 
 local detailed = [[

@@ -5,7 +5,7 @@ local cuid = require 'cuid'
 local fingerprint = "muh-hell3"
 
 local function is_hex (text)
-	return text: match ("[a-f0-9]+") == text
+	return text: match ("[a-z0-9]+") == text
 end
 
 describe ("cuid unit testing -", function ( )
@@ -37,7 +37,7 @@ describe ("cuid unit testing -", function ( )
 	end)
 
 	it ("should not collide cuids", function ( )
-		local ITERATIONS = math.random (200000, 1200000)
+		local ITERATIONS = math.random (100000, 1000000)
 
 		local cuids     = { }
 		local collision = false
