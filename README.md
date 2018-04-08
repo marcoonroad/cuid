@@ -11,13 +11,13 @@ For more information, see: http://usecuid.org
 
 If available on LuaRocks:
 
-```
+```shell
 $ luarocks --local install cuid
 ```
 
 Otherwise, you could install through this root project directory:
 
-```
+```shell
 $ luarocks --local make
 ```
 
@@ -43,6 +43,16 @@ As an example of CUID, we have `c00p6qup20000ckkzslahp5pn`, where:
 - `ckkz` is the machine/host fingerprint.
 - `slahp5pn` are pseudo-random numbers.
 
+To generate slugs (shorter and collision-weak CUIDs), just type the following:
+
+```lua
+local slug = cuid.slug ( )
+```
+
+Slugs are made of 8 characters, and there's no prefix
+(as is the case of CUIDs - "c" in the case). So, slugs
+are often used as suffixes, for instance, on URLs.
+
 ### Configuration
 
 You could as well set a custom fingerprint for CUID generation
@@ -52,6 +62,23 @@ by an environment variable. This environment variable is called
 Whenever the `cuid` library is loaded, it will lookup such
 environment variable to generate a fingerprint if it is
 indeed defined.
+
+It's also possible to set a custom fingerprint prior CUID/slug
+generation, just type the following for both cases:
+
+```lua
+local cuid = require 'cuid'
+
+local fingerprint_input = "It's me, Mario!"
+
+local id   = cuid.generate (fingerprint_input)
+local slug = cuid.slug (fingerprint_input)
+```
+
+Such fingerprint text is used only once per function call,
+that is, on the next function call, everything remains the
+same of previous state prior custom fingerprint's function
+call.
 
 ### Remarks
 

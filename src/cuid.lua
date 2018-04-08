@@ -132,11 +132,15 @@ function export.__reset_fingerprint ( )
 	DEFAULT_FINGERPRINT = default_fingerprint ( )
 end
 
-function export.__structure( )
+function export.__structure (input)
+	if input then export.__set_fingerprint (tostring (input)) end
+
 	local timestamp = pad_from_base36 (os.time ( ),      BLOCK_SIZE * 2)
 	local count     = pad_from_base36 (safe_counter ( ), BLOCK_SIZE)
 	local print     = fingerprint ( )
 	local random    = random_block ( ) .. random_block ( )
+
+	if input then export.__reset_fingerprint ( ) end
 
 	return {
 		prefix      = CUID_PREFIX,
@@ -148,14 +152,24 @@ function export.__structure( )
 end
 
 -- public API ----------------------------------------------------
-function export.generate ( )
-	local result = export.__structure ( )
+function export.generate (input)
+	local result = export.__structure (input)
 
 	return result.prefix ..
 		result.timestamp ..
 		result.counter ..
 		result.fingerprint ..
 		result.random
+end
+
+function export.slug (input)
+	local result = export.__structure (input)
+
+	return result.timestamp: sub (-2) ..
+		result.counter: sub (-2) ..
+		result.fingerprint: sub (1, 1) ..
+		result.fingerprint: sub (-1) ..
+		result.random: sub (-2)
 end
 
 return export

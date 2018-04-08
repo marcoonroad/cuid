@@ -4,7 +4,7 @@ local cuid = require 'cuid'
 
 local fingerprint = "muh-hell3"
 
-local function is_hex (text)
+local function is_base36 (text)
 	return text: match ("[a-z0-9]+") == text
 end
 
@@ -20,11 +20,11 @@ describe ("cuid unit testing -", function ( )
 		assert.same (result.fingerprint: len ( ), 4)
 		assert.same (result.random:      len ( ), 8)
 
-		assert.truthy (is_hex (result.prefix))
-		assert.truthy (is_hex (result.timestamp))
-		assert.truthy (is_hex (result.counter))
-		assert.truthy (is_hex (result.fingerprint))
-		assert.truthy (is_hex (result.random))
+		assert.truthy (is_base36 (result.prefix))
+		assert.truthy (is_base36 (result.timestamp))
+		assert.truthy (is_base36 (result.counter))
+		assert.truthy (is_base36 (result.fingerprint))
+		assert.truthy (is_base36 (result.random))
 	end)
 
 	it ("should generate a proper cuid", function ( )
@@ -33,7 +33,14 @@ describe ("cuid unit testing -", function ( )
 		assert.same (id: len ( ), 25)
 		assert.same (id: sub (1, 1), 'c')
 
-		assert.truthy (is_hex (id))
+		assert.truthy (is_base36 (id))
+	end)
+
+	it ("should generate a proper cuid slug", function ( )
+		local slug = cuid.slug ( )
+
+		assert.same (slug: len ( ), 8)
+		assert.truthy (is_base36 (slug))
 	end)
 
 	it ("should not collide cuids", function ( )
@@ -57,18 +64,29 @@ describe ("cuid unit testing -", function ( )
 	end)
 
 	it ("fingerprint should not resemble the fingerprint feed", function ( )
-		cuid.__set_fingerprint (fingerprint)
-		finally (cuid.__reset_fingerprint)
+		local previous = cuid.__structure ( )
 
-		local result = cuid.__structure ( )
+		local result = cuid.__structure (fingerprint)
 		assert.are_not.same (result.fingerprint, "ell3")
+
+		local current = cuid.__structure ( )
+		assert.same (previous.fingerprint, current.fingerprint)
 	end)
 
 	it ("fingerprint should generate valid hexadecimal values", function ( )
-		cuid.__set_fingerprint (fingerprint)
-		finally (cuid.__reset_fingerprint)
+		do
+			local result   = cuid.__structure (fingerprint)
+			assert.truthy (is_base36 (result.fingerprint))
+		end
 
-		local result = cuid.__structure ( )
-		assert.truthy (is_hex (result.fingerprint))
+		do
+			local result = cuid.generate (fingerprint)
+			assert.truthy (is_base36 (result))
+		end
+
+		do
+			local result = cuid.slug (fingerprint)
+			assert.truthy (is_base36 (result))
+		end
 	end)
 end)
