@@ -2,8 +2,17 @@
 
 CUID generator for Lua.
 
-[![Build Status](https://travis-ci.org/marcoonroad/cuid.svg?branch=master)](https://travis-ci.org/marcoonroad/cuid)
-[![Coverage Status](https://coveralls.io/repos/github/marcoonroad/cuid/badge.svg?branch=master)](https://coveralls.io/github/marcoonroad/cuid?branch=master)
+[![Travis](https://img.shields.io/travis/marcoonroad/cuid.svg?style=flat-square)](https://travis-ci.org/marcoonroad/cuid)
+<span> </span>
+[![Coveralls github](https://img.shields.io/coveralls/github/marcoonroad/cuid.svg?style=flat-square)](https://coveralls.io/github/marcoonroad/cuid?branch=master)
+<span> </span>
+![LuaRocks](https://img.shields.io/luarocks/v/marcoonroad/cuid.svg?style=flat-square)
+<span> </span>
+![license](https://img.shields.io/github/license/marcoonroad/cuid.svg?style=flat-square)
+<span> </span>
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
+<p/>
 
 For more information, see: http://usecuid.org
 
