@@ -67,15 +67,16 @@ describe ("cuid unit testing -", function ( )
 		local previous = cuid.__structure ( )
 
 		local result = cuid.__structure (fingerprint)
+		assert.are_not.same (result.fingerprint, previous.fingerprint)
 		assert.are_not.same (result.fingerprint, "ell3")
 
 		local current = cuid.__structure ( )
 		assert.same (previous.fingerprint, current.fingerprint)
 	end)
 
-	it ("fingerprint should generate valid hexadecimal values", function ( )
+	it ("fingerprint should generate valid base-36 values", function ( )
 		do
-			local result   = cuid.__structure (fingerprint)
+			local result = cuid.__structure (fingerprint)
 			assert.truthy (is_base36 (result.fingerprint))
 		end
 

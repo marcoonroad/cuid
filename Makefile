@@ -4,6 +4,7 @@ install:
 	luarocks make
 
 check:
+	luarocks lint `find . -name '*.rockspec' -print`
 	luacheck --std max+busted src spec
 
 test: check
