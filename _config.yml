@@ -1,0 +1,11 @@
+title: cuid
+description: "CUID generator for Lua."
+theme: jekyll-theme-slate
+show_downloads: false
+google_analytics: UA-41209773-2
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - CNAME
+  - vendor

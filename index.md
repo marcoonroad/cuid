@@ -1,3 +1,6 @@
+---
+---
+
 # CUID
 
 CUID generator for Lua.
@@ -14,7 +17,7 @@ CUID generator for Lua.
 
 <p/>
 
-For more information, see: http://usecuid.org
+For more information, see: [http://usecuid.org](http://usecuid.org)
 
 ### Installation
 
@@ -88,6 +91,10 @@ Such fingerprint text is used only once per function call,
 that is, on the next function call, everything remains the
 same of previous state prior custom fingerprint's function
 call.
+
+### Credits
+
+- [Eric Elliott](https://github.com/ericelliott) (author of the spec & maintainer of the original JS implementation)
 
 ### Remarks
 
